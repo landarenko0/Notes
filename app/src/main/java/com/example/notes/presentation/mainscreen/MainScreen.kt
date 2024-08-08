@@ -23,7 +23,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.notes.domain.models.Page
+import com.example.notes.util.Page
 import com.example.notes.presentation.mainscreen.components.AddNoteOrTaskBottomSheet
 import com.example.notes.presentation.mainscreen.components.TopBar
 import com.example.notes.presentation.mainscreen.components.notes.NotesList

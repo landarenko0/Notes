@@ -12,7 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.notes.R
-import com.example.notes.domain.models.Page
+import com.example.notes.util.Page
 import com.example.notes.presentation.ui.theme.iconFilledTint
 import com.example.notes.presentation.ui.theme.iconOutlinedTint
 
