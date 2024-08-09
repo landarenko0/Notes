@@ -13,6 +13,7 @@ viewModelCompose = "2.8.4"
 hilt = "2.51.1"
 hiltNavigationCompose = "1.2.0"
 material3 = "1.2.1"
+navigationCompose = "2.7.7"
 
 [libraries]
 # Core
@@ -33,6 +34,7 @@ androidx-ui = { group = "androidx.compose.ui", name = "ui" }
 androidx-ui-graphics = { group = "androidx.compose.ui", name = "ui-graphics" }
 androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
+androidx-navigationCompose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
 # Material Design
 androidx-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "material3" }
 # Room
@@ -48,7 +50,7 @@ hilt-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", v
 core = [ "androidx-core-ktx" ]
 tests = [ "junit", "androidx-junit", "androidx-espresso-core", "androidx-ui-test-junit4", "androidx-ui-test-manifest" ]
 lifecycle = [ "androidx-lifecycle-runtime-ktx", "androidx-viewModelCompose" ]
-compose = [ "androidx-activity-compose", "androidx-ui", "androidx-ui-graphics", "androidx-ui-tooling", "androidx-ui-tooling-preview" ]
+compose = [ "androidx-activity-compose", "androidx-ui", "androidx-ui-graphics", "androidx-ui-tooling", "androidx-ui-tooling-preview", "androidx-navigationCompose" ]
 material = [ "androidx-material3" ]
 room = [ "androidx-room", "androidx-room-ktx" ]
 hilt = [ "hilt", "hilt-navigationCompose" ]
