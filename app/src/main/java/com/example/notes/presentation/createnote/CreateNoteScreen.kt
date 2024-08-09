@@ -61,10 +61,14 @@ fun CreateNoteScreen(navController: NavController) {
                             Icon(
                                 imageVector = Icons.Default.Check,
                                 contentDescription = "Create note",
-                                modifier = Modifier.clickable {
-                                    viewModel.createNote()
-                                    navController.popBackStack()
-                                }
+                                modifier = Modifier.clickable(
+                                    interactionSource = interactionSource,
+                                    indication = null,
+                                    onClick = {
+                                        viewModel.saveNote()
+                                        navController.popBackStack()
+                                    }
+                                )
                             )
                         }
                     }
