@@ -23,6 +23,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import com.example.notes.navigation.AppScreens
 import com.example.notes.util.Page
 import com.example.notes.presentation.mainscreen.components.AddNoteOrTaskBottomSheet
 import com.example.notes.presentation.mainscreen.components.TopBar
@@ -31,7 +33,7 @@ import com.example.notes.presentation.mainscreen.components.tasks.TasksList
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
-fun MainScreen() {
+fun MainScreen(navController: NavController) {
     val viewModel: MainScreenViewModel = hiltViewModel()
     val pagerState = rememberPagerState(pageCount = { 2 })
     val isBottomSheetOpen = remember { mutableStateOf(false) }
@@ -56,7 +58,7 @@ fun MainScreen() {
                     .padding(bottom = 30.dp, end = 20.dp)
                     .size(60.dp),
                 shape = CircleShape,
-                onClick = { isBottomSheetOpen.value = true }
+                onClick = { navController.navigate(AppScreens.CreateNoteScreen.route) }
             ) {
                 Icon(
                     modifier = Modifier.size(40.dp),
