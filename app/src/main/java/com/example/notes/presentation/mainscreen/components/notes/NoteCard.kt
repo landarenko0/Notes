@@ -22,12 +22,12 @@ import java.time.LocalDate
 @Composable
 fun NoteCard(
     note: Note,
-    onClick: () -> Unit,
+    onClick: (Long) -> Unit,
     modifier: Modifier
 ) {
     Card(
         shape = RoundedCornerShape(16.dp),
-        onClick = onClick,
+        onClick = { onClick(note.id) },
         modifier = modifier.fillMaxWidth()
     ) {
         Column(

@@ -13,13 +13,13 @@ fun NavGraph() {
     
     NavHost(
         navController = navController,
-        startDestination = AppScreens.MainScreen.route
+        startDestination = AppScreens.MainScreen
     ) {
-        composable(route = AppScreens.MainScreen.route) {
+        composable<AppScreens.MainScreen> {
             MainScreen(navController)
         }
 
-        composable(route = AppScreens.CreateNoteScreen.route) {
+        composable<AppScreens.CreateNoteScreen> {
             CreateNoteScreen(navController)
         }
     }

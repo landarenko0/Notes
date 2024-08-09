@@ -1,7 +1,12 @@
 package com.example.notes.navigation
 
-sealed class AppScreens(val route: String) {
+import kotlinx.serialization.Serializable
 
-    data object MainScreen : AppScreens("main")
-    data object CreateNoteScreen : AppScreens("createnote")
+object AppScreens {
+
+    @Serializable
+    data object MainScreen
+
+    @Serializable
+    data class CreateNoteScreen(val noteId: Long?)
 }
