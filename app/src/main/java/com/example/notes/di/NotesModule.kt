@@ -14,6 +14,7 @@ import com.example.notes.domain.usecases.DeleteNotesInteractor
 import com.example.notes.domain.usecases.DeleteTasksInteractor
 import com.example.notes.domain.usecases.GetAllNotesInteractor
 import com.example.notes.domain.usecases.GetAllTasksInteractor
+import com.example.notes.domain.usecases.GetNoteByIdInteractor
 import com.example.notes.domain.usecases.NoteUseCases
 import com.example.notes.domain.usecases.TaskUseCases
 import com.example.notes.domain.usecases.UpdateNoteInteractor
@@ -51,6 +52,7 @@ object NotesModule {
     fun provideNoteUseCases(noteRepository: NoteRepository): NoteUseCases =
         NoteUseCases(
             getAllNotes = GetAllNotesInteractor(noteRepository),
+            getNoteById = GetNoteByIdInteractor(noteRepository),
             addNote = AddNoteInteractor(noteRepository),
             updateNote = UpdateNoteInteractor(noteRepository),
             deleteNotes = DeleteNotesInteractor(noteRepository)
