@@ -20,7 +20,7 @@ fun NavGraph() {
         }
 
         composable(route = AppScreens.CreateNoteScreen.route) {
-            CreateNoteScreen()
+            CreateNoteScreen(navController)
         }
     }
 }
