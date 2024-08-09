@@ -23,7 +23,6 @@ fun NotesList(
         modifier = Modifier
             .fillMaxSize()
             .padding(20.dp),
-        verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         when {
@@ -38,7 +37,15 @@ fun NotesList(
                 }
             }
 
-            else -> Text(text = "Нет заметок")
+            else -> {
+                Column(
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    Text(text = "Нет заметок")
+                }
+            }
         }
     }
 }

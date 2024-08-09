@@ -21,7 +21,6 @@ fun TasksList(tasks: List<Task>) {
         modifier = Modifier
             .fillMaxSize()
             .padding(20.dp),
-        verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         when {
@@ -36,7 +35,15 @@ fun TasksList(tasks: List<Task>) {
                 }
             }
 
-            else -> Text(text = "Нет заданий")
+            else -> {
+                Column(
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    Text(text = "Нет заданий")
+                }
+            }
         }
     }
 }
