@@ -17,13 +17,13 @@ import com.example.notes.domain.models.Note
 
 @Composable
 fun NotesList(
-    notes: List<Note>
+    notes: List<Note>,
+    onNoteClick: (Long) -> Unit
 ) {
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(20.dp),
-        verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         when {
@@ -33,12 +33,20 @@ fun NotesList(
                     modifier = Modifier.clip(RoundedCornerShape(16.dp))
                 ) {
                     items(notes) { note ->
-                        NoteCard(note = note, onClick = { }, modifier = Modifier)
+                        NoteCard(note = note, onClick = onNoteClick, modifier = Modifier)
                     }
                 }
             }
 
-            else -> Text(text = "Нет заметок")
+            else -> {
+                Column(
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    Text(text = "Нет заметок")
+                }
+            }
         }
     }
 }

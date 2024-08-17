@@ -4,7 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import com.example.notes.presentation.mainscreen.MainScreen
+import com.example.notes.navigation.NavGraph
 import com.example.notes.presentation.ui.theme.NotesTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -15,7 +15,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             NotesTheme {
-                MainScreen()
+                NavGraph()
             }
         }
     }

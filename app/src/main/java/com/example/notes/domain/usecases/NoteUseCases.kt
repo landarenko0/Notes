@@ -5,6 +5,7 @@ import com.example.notes.domain.models.Note
 
 class NoteUseCases(
     val getAllNotes: GetAllNotesInteractor,
+    val getNoteById: GetNoteByIdInteractor,
     val addNote: AddNoteInteractor,
     val updateNote: UpdateNoteInteractor,
     val deleteNotes: DeleteNotesInteractor
@@ -12,6 +13,10 @@ class NoteUseCases(
 
 class GetAllNotesInteractor(private val repository: NoteRepository) {
     suspend operator fun invoke() = repository.getAllNotes()
+}
+
+class GetNoteByIdInteractor(private val repository: NoteRepository) {
+    suspend operator fun invoke(noteId: Long) = repository.getNoteById(noteId)
 }
 
 class AddNoteInteractor(private val repository: NoteRepository) {

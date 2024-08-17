@@ -3,16 +3,17 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.hilt)
     alias(libs.plugins.kapt)
+    alias(libs.plugins.serialization)
 }
 
 android {
     namespace = "com.example.notes"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.example.notes"
         minSdk = 26
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -61,4 +62,5 @@ dependencies {
     kapt(libs.androidx.room.compiler)
     implementation(libs.bundles.hilt)
     kapt(libs.hilt.compiler)
+    implementation(libs.bundles.serialization)
 }

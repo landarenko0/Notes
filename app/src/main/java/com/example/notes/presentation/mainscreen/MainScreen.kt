@@ -1,6 +1,5 @@
 package com.example.notes.presentation.mainscreen
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -23,15 +22,17 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import com.example.notes.navigation.AppScreens
 import com.example.notes.util.Page
 import com.example.notes.presentation.mainscreen.components.AddNoteOrTaskBottomSheet
 import com.example.notes.presentation.mainscreen.components.TopBar
 import com.example.notes.presentation.mainscreen.components.notes.NotesList
 import com.example.notes.presentation.mainscreen.components.tasks.TasksList
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen() {
+fun MainScreen(navController: NavController) {
     val viewModel: MainScreenViewModel = hiltViewModel()
     val pagerState = rememberPagerState(pageCount = { 2 })
     val isBottomSheetOpen = remember { mutableStateOf(false) }
@@ -56,7 +57,7 @@ fun MainScreen() {
                     .padding(bottom = 30.dp, end = 20.dp)
                     .size(60.dp),
                 shape = CircleShape,
-                onClick = { isBottomSheetOpen.value = true }
+                onClick = { navController.navigate(AppScreens.CreateNoteScreen(null)) }
             ) {
                 Icon(
                     modifier = Modifier.size(40.dp),
@@ -65,16 +66,19 @@ fun MainScreen() {
                 )
             }
         }
-    ) {
+    ) { paddingValues ->
         HorizontalPager(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = it.calculateTopPadding()),
+                .padding(top = paddingValues.calculateTopPadding()),
             state = pagerState,
             pageSpacing = 10.dp
         ) { page ->
             when (page) {
-                Page.NOTES.index -> NotesList(notes = viewModel.notes)
+                Page.NOTES.index -> NotesList(
+                    notes = viewModel.notes,
+                    onNoteClick = { navController.navigate(AppScreens.CreateNoteScreen(it)) }
+                )
 
                 Page.TASKS.index -> TasksList(tasks = viewModel.tasks)
             }
