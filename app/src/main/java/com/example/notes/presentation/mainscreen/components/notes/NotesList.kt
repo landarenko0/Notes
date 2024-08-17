@@ -18,7 +18,10 @@ import com.example.notes.domain.models.Note
 @Composable
 fun NotesList(
     notes: List<Note>,
-    onNoteClick: (Long) -> Unit
+    noteSelectionEnabled: Boolean,
+    checkedNotes: List<Long>,
+    onNoteClick: (Long) -> Unit,
+    onLongNoteClick: (Long) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -33,7 +36,14 @@ fun NotesList(
                     modifier = Modifier.clip(RoundedCornerShape(16.dp))
                 ) {
                     items(notes) { note ->
-                        NoteCard(note = note, onClick = onNoteClick, modifier = Modifier)
+                        NoteCard(
+                            note = note,
+                            modifier = Modifier,
+                            noteSelectionEnabled = noteSelectionEnabled,
+                            isChecked = note.id in checkedNotes,
+                            onClick = onNoteClick,
+                            onLongClick = onLongNoteClick
+                        )
                     }
                 }
             }

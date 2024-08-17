@@ -1,6 +1,7 @@
 package com.example.notes.presentation.mainscreen
 
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.notes.domain.models.Note
@@ -24,6 +25,14 @@ class MainScreenViewModel @Inject constructor(
     private val _tasks = mutableStateListOf<Task>()
     val tasks: List<Task> = _tasks
 
+    private val _selectedNotes = mutableStateListOf<Long>()
+    val selectedNotes: List<Long> = _selectedNotes
+
+    private val _selectedTasks = mutableStateListOf<Long>()
+    val selectedTasks: List<Long> = _selectedTasks
+
+    val selectionEnabled = mutableStateOf(false)
+
     init {
         viewModelScope.launch {
             getAllNotes()
@@ -43,21 +52,29 @@ class MainScreenViewModel @Inject constructor(
         }
     }
 
-    fun addNote(note: Note) {
+    fun deleteNotes() {
         viewModelScope.launch {
-            noteUseCases.addNote(note)
+            noteUseCases.deleteNotes(_selectedNotes)
+            clearSelectedNotes()
         }
     }
 
-    fun updateNote(note: Note) {
+    fun deleteTasks() {
         viewModelScope.launch {
-            noteUseCases.updateNote(note)
+            taskUseCases.deleteTasks(_selectedTasks)
+            clearSelectedTasks()
         }
     }
 
-    fun deleteNotes(notes: List<Note>) {
-        viewModelScope.launch {
-            noteUseCases.deleteNotes(notes)
-        }
-    }
+    fun addNoteToSelectedNotes(noteId: Long) = _selectedNotes.add(noteId)
+
+    fun removeNoteFromSelectedNotes(noteId: Long) = _selectedNotes.remove(noteId)
+
+    fun clearSelectedNotes() = _selectedNotes.clear()
+
+    fun addTaskToSelectedTasks(taskId: Long) = _selectedTasks.add(taskId)
+
+    fun removeTaskFromSelectedTasks(taskId: Long) = _selectedTasks.remove(taskId)
+
+    fun clearSelectedTasks() = _selectedTasks.clear()
 }
