@@ -4,7 +4,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -30,7 +29,6 @@ import androidx.navigation.NavController
 @Composable
 fun CreateNoteScreen(navController: NavController) {
     val viewModel: CreateNoteViewModel = hiltViewModel()
-    val interactionSource = remember { MutableInteractionSource() }
 
     Scaffold(
         topBar = {
@@ -40,39 +38,36 @@ fun CreateNoteScreen(navController: NavController) {
                         imageVector = Icons.AutoMirrored.Default.ArrowBack,
                         contentDescription = "Back",
                         modifier = Modifier
-                            .padding(start = 20.dp)
                             .clickable(
-                                interactionSource = interactionSource,
+                                interactionSource = remember { MutableInteractionSource() },
                                 indication = null,
                                 onClick = { navController.popBackStack() }
                             )
                     )
                 },
                 title = {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 20.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween
-                    ) {
-                        Text(text = "Новая заметка")
-
-                        if (viewModel.description.value.isNotEmpty() && viewModel.description.value.isNotBlank()) {
-                            Icon(
-                                imageVector = Icons.Default.Check,
-                                contentDescription = "Create note",
-                                modifier = Modifier.clickable(
-                                    interactionSource = interactionSource,
-                                    indication = null,
-                                    onClick = {
-                                        viewModel.saveNote()
-                                        navController.popBackStack()
-                                    }
-                                )
+                    Text(
+                        text = "Новая заметка",
+                        modifier = Modifier.padding(start = 20.dp)
+                    )
+                },
+                actions = {
+                    if (viewModel.description.value.isNotEmpty() && viewModel.description.value.isNotBlank()) {
+                        Icon(
+                            imageVector = Icons.Default.Check,
+                            contentDescription = "Create note",
+                            modifier = Modifier.clickable(
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = null,
+                                onClick = {
+                                    viewModel.saveNote()
+                                    navController.popBackStack()
+                                }
                             )
-                        }
+                        )
                     }
-                }
+                },
+                modifier = Modifier.padding(horizontal = 20.dp)
             )
         }
     ) { paddingValues ->
@@ -91,7 +86,7 @@ fun CreateNoteScreen(navController: NavController) {
                 value = viewModel.title.value,
                 label = { Text(text = "Заголовок") },
                 onValueChange = { viewModel.title.value = it },
-                textStyle = TextStyle.Default.copy(fontSize = 24.sp),
+                textStyle = TextStyle.Default.copy(fontSize = 20.sp),
                 modifier = Modifier.fillMaxWidth()
             )
 
