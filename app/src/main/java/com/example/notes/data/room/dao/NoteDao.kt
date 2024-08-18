@@ -1,7 +1,6 @@
 package com.example.notes.data.room.dao
 
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
@@ -23,6 +22,6 @@ interface NoteDao {
     @Update
     suspend fun updateNote(note: Note)
 
-    @Delete
-    suspend fun deleteNotes(notes: List<Note>)
+    @Query("DELETE FROM note WHERE id IN (:notes)")
+    suspend fun deleteNotes(notes: List<Long>)
 }

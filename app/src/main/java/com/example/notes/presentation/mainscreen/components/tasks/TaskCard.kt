@@ -1,6 +1,9 @@
 package com.example.notes.presentation.mainscreen.components.tasks
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -11,38 +14,76 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.example.notes.domain.models.Task
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun TaskCard(
     task: Task,
-    onClick: () -> Unit,
-    modifier: Modifier
+    modifier: Modifier,
+    selectionEnabled: Boolean,
+    isChecked: Boolean,
+    onClick: (Task) -> Unit,
+    markTaskCompleted: (Task, Boolean) -> Unit,
+    onLongClick: (Long) -> Unit,
 ) {
     Card(
-        shape = RoundedCornerShape(16.dp),
-        onClick = onClick,
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(16.dp))
+            .combinedClickable(
+                onClick = { onClick(task) },
+                onLongClick = { onLongClick(task.id) }
+            )
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(15.dp),
-            modifier = Modifier.padding(10.dp)
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 15.dp, start = 15.dp, end = 15.dp, bottom = 10.dp)
         ) {
-            Checkbox(
-                checked = task.isDone,
-                onCheckedChange = { }
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.weight(1f)
+            ) {
+                // Checkbox for changing task state
+                Checkbox(
+                    checked = task.isDone,
+                    onCheckedChange = { markTaskCompleted(task, it) },
+                    enabled = !selectionEnabled
+                )
 
-            Text(text = task.text)
+                Column(
+                    horizontalAlignment = Alignment.Start,
+                    verticalArrangement = Arrangement.spacedBy(5.dp)
+                ) {
+                    Text(
+                        text = task.text,
+                        fontSize = 16.sp,
+                        fontWeight = FontWeight.Bold,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+
+                    task.notificationTime?.let {
+                        Text(text = it.toString())
+                    }
+                }
+            }
+
+            // Checkbox for selection
+            if (selectionEnabled) {
+                Checkbox(
+                    checked = isChecked,
+                    onCheckedChange = { onClick(task) }
+                )
+            }
         }
-    }
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(10.dp),
-        modifier = modifier
-    ) {
-
     }
 }

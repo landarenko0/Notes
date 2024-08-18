@@ -1,7 +1,6 @@
 package com.example.notes.data.room.dao
 
 import androidx.room.Dao
-import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
@@ -20,6 +19,6 @@ interface TaskDao {
     @Update
     suspend fun updateTask(task: Task)
 
-    @Delete
-    suspend fun deleteTasks(tasks: List<Task>)
+    @Query("DELETE FROM task WHERE id IN (:tasks)")
+    suspend fun deleteTasks(tasks: List<Long>)
 }

@@ -28,5 +28,5 @@ class UpdateNoteInteractor(private val repository: NoteRepository) {
 }
 
 class DeleteNotesInteractor(private val repository: NoteRepository) {
-    suspend operator fun invoke(notes: List<Note>) = repository.deleteNotes(notes)
+    suspend operator fun invoke(notes: List<Long>) = repository.deleteNotes(notes)
 }

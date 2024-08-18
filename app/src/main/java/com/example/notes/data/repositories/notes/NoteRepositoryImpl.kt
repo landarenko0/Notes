@@ -14,5 +14,5 @@ class NoteRepositoryImpl(private val noteDao: NoteDao) : NoteRepository {
 
     override suspend fun updateNote(note: Note) = noteDao.updateNote(note)
 
-    override suspend fun deleteNotes(notes: List<Note>) = noteDao.deleteNotes(notes)
+    override suspend fun deleteNotes(notes: List<Long>) = noteDao.deleteNotes(notes)
 }

@@ -8,25 +8,25 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.notes.navigation.AppScreens
 import com.example.notes.util.Page
-import com.example.notes.presentation.mainscreen.components.AddNoteOrTaskBottomSheet
-import com.example.notes.presentation.mainscreen.components.TopBar
+import com.example.notes.presentation.mainscreen.components.TopAppBarTitle
 import com.example.notes.presentation.mainscreen.components.notes.NotesList
 import com.example.notes.presentation.mainscreen.components.tasks.TasksList
 
@@ -35,35 +35,80 @@ import com.example.notes.presentation.mainscreen.components.tasks.TasksList
 fun MainScreen(navController: NavController) {
     val viewModel: MainScreenViewModel = hiltViewModel()
     val pagerState = rememberPagerState(pageCount = { 2 })
-    val isBottomSheetOpen = remember { mutableStateOf(false) }
-    val sheetState = rememberModalBottomSheetState()
-    val scope = rememberCoroutineScope()
+
+    val isSaveTaskDialogOpen = remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
             TopAppBar(
+                navigationIcon = {
+                    if (viewModel.selectionEnabled.value) {
+                        IconButton(
+                            onClick = {
+                                viewModel.selectionEnabled.value = false
+                                viewModel.clearCheckedItems()
+                            }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Close,
+                                contentDescription = "Disable selection"
+                            )
+                        }
+                    }
+                },
                 title = {
-                    TopBar(
-                        currentPage = if (pagerState.currentPage == Page.NOTES.index) Page.NOTES else Page.TASKS,
-                        modifier = Modifier.fillMaxWidth()
+                    TopAppBarTitle(
+                        currentPage = Page.getPage(pagerState.currentPage),
+                        modifier = Modifier.fillMaxWidth(),
+                        noteSelectionEnabled = viewModel.selectionEnabled.value,
+                        selectedNotes = viewModel.checkedItems.size
                     )
                 },
-                modifier = Modifier.fillMaxWidth()
+                actions = {
+                    if (viewModel.selectionEnabled.value) {
+                        IconButton(
+                            onClick = {
+                                when (Page.getPage(pagerState.currentPage)) {
+                                    Page.NOTES -> viewModel.deleteNotes()
+                                    Page.TASKS -> viewModel.deleteTasks()
+                                }
+
+                                viewModel.selectionEnabled.value = false
+                            },
+                            enabled = viewModel.checkedItems.isNotEmpty()
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Delete,
+                                contentDescription = "Delete selected notes",
+                            )
+                        }
+                    }
+                },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp)
             )
         },
         floatingActionButton = {
-            FloatingActionButton(
-                modifier = Modifier
-                    .padding(bottom = 30.dp, end = 20.dp)
-                    .size(60.dp),
-                shape = CircleShape,
-                onClick = { navController.navigate(AppScreens.CreateNoteScreen(null)) }
-            ) {
-                Icon(
-                    modifier = Modifier.size(40.dp),
-                    imageVector = Icons.Rounded.Add,
-                    contentDescription = "Add note"
-                )
+            if (!viewModel.selectionEnabled.value) {
+                FloatingActionButton(
+                    modifier = Modifier
+                        .padding(bottom = 30.dp, end = 20.dp)
+                        .size(60.dp),
+                    shape = CircleShape,
+                    onClick = {
+                        when (Page.getPage(pagerState.currentPage)) {
+                            Page.NOTES -> navController.navigate(AppScreens.CreateNoteScreen(null))
+                            Page.TASKS -> isSaveTaskDialogOpen.value = true
+                        }
+                    }
+                ) {
+                    Icon(
+                        modifier = Modifier.size(40.dp),
+                        imageVector = Icons.Rounded.Add,
+                        contentDescription = "Create note or task"
+                    )
+                }
             }
         }
     ) { paddingValues ->
@@ -72,26 +117,68 @@ fun MainScreen(navController: NavController) {
                 .fillMaxSize()
                 .padding(top = paddingValues.calculateTopPadding()),
             state = pagerState,
-            pageSpacing = 10.dp
-        ) { page ->
-            when (page) {
-                Page.NOTES.index -> NotesList(
+            pageSpacing = 10.dp,
+            userScrollEnabled = !viewModel.selectionEnabled.value
+        ) { index ->
+            when (Page.getPage(index)) {
+                Page.NOTES -> NotesList(
                     notes = viewModel.notes,
-                    onNoteClick = { navController.navigate(AppScreens.CreateNoteScreen(it)) }
+                    selectionEnabled = viewModel.selectionEnabled.value,
+                    checkedNotes = viewModel.checkedItems,
+                    onNoteClick = { noteId ->
+                        if (viewModel.selectionEnabled.value) {
+                            if (noteId in viewModel.checkedItems) {
+                                viewModel.removeItemFromChecked(noteId)
+                            } else {
+                                viewModel.checkItem(noteId)
+                            }
+                        } else {
+                            navController.navigate(AppScreens.CreateNoteScreen(noteId))
+                        }
+                    },
+                    onLongNoteClick = {
+                        if (!viewModel.selectionEnabled.value) {
+                            viewModel.checkItem(it)
+                            viewModel.selectionEnabled.value = true
+                        }
+                    }
                 )
 
-                Page.TASKS.index -> TasksList(tasks = viewModel.tasks)
+                Page.TASKS -> TasksList(
+                    tasks = viewModel.tasks,
+                    selectionEnabled = viewModel.selectionEnabled.value,
+                    checkedTasks = viewModel.checkedItems,
+                    selectedTask = viewModel.selectedTask,
+                    isBottomSheetOpen = isSaveTaskDialogOpen.value,
+                    onDialogDismiss = {
+                        isSaveTaskDialogOpen.value = false
+                        viewModel.selectedTask = null
+                    },
+                    saveTask = { taskText, notificationTime ->
+                        viewModel.saveTask(taskText, notificationTime)
+                        isSaveTaskDialogOpen.value = false
+                    },
+                    markTaskCompleted = viewModel::markTaskCompleted,
+                    onTaskClick = { task ->
+                        if (viewModel.selectionEnabled.value) {
+                            if (task.id in viewModel.checkedItems) {
+                                viewModel.removeItemFromChecked(task.id)
+                            } else {
+                                viewModel.checkItem(task.id)
+                            }
+                        } else {
+                            viewModel.selectedTask = task
+                            isSaveTaskDialogOpen.value = true
+                        }
+                    },
+                    onLongTaskClick = {
+                        if (!viewModel.selectionEnabled.value) {
+                            viewModel.checkItem(it)
+                            viewModel.selectionEnabled.value = true
+                        }
+                    }
+                )
             }
         }
-    }
-
-    if (isBottomSheetOpen.value) {
-        AddNoteOrTaskBottomSheet(
-            isOpen = isBottomSheetOpen,
-            currentPage = if (pagerState.currentPage == Page.NOTES.index) Page.NOTES else Page.TASKS,
-            onAddButtonClick = viewModel::addNote,
-            scope = scope,
-            sheetState = sheetState
-        )
     }
 }

@@ -14,9 +14,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import com.example.notes.domain.models.Task
+import com.example.notes.presentation.mainscreen.components.SaveTaskDialog
+import java.time.LocalDateTime
 
 @Composable
-fun TasksList(tasks: List<Task>) {
+fun TasksList(
+    tasks: List<Task>,
+    selectionEnabled: Boolean,
+    checkedTasks: List<Long>,
+    selectedTask: Task?,
+    isBottomSheetOpen: Boolean,
+    onDialogDismiss: () -> Unit,
+    saveTask: (text: String, notificationTime: LocalDateTime?) -> Unit,
+    markTaskCompleted: (Task, Boolean) -> Unit,
+    onTaskClick: (Task) -> Unit,
+    onLongTaskClick: (Long) -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -30,7 +43,15 @@ fun TasksList(tasks: List<Task>) {
                     modifier = Modifier.clip(RoundedCornerShape(16.dp))
                 ) {
                     items(tasks) { task ->
-                        TaskCard(task = task, onClick = { }, modifier = Modifier)
+                        TaskCard(
+                            task = task,
+                            modifier = Modifier,
+                            selectionEnabled = selectionEnabled,
+                            isChecked = task.id in checkedTasks,
+                            onClick = onTaskClick,
+                            markTaskCompleted = markTaskCompleted,
+                            onLongClick = onLongTaskClick
+                        )
                     }
                 }
             }
@@ -45,5 +66,13 @@ fun TasksList(tasks: List<Task>) {
                 }
             }
         }
+    }
+
+    if (isBottomSheetOpen) {
+        SaveTaskDialog(
+            onSaveButtonClick = saveTask,
+            onDismiss = onDialogDismiss,
+            selectedTask = selectedTask
+        )
     }
 }

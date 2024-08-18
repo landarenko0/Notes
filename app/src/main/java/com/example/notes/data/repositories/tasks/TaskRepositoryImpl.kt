@@ -12,5 +12,5 @@ class TaskRepositoryImpl(private val tasksDao: TaskDao) : TaskRepository {
 
     override suspend fun updateTask(task: Task) = tasksDao.updateTask(task)
 
-    override suspend fun deleteTasks(tasks: List<Task>) = tasksDao.deleteTasks(tasks)
+    override suspend fun deleteTasks(tasks: List<Long>) = tasksDao.deleteTasks(tasks)
 }

@@ -6,8 +6,8 @@ import java.time.LocalDateTime
 
 @Entity
 data class Task(
-    @PrimaryKey(autoGenerate = true) val id: Long,
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val text: String,
-    val isDone: Boolean,
+    val isDone: Boolean = false,
     val notificationTime: LocalDateTime? = null
 )
