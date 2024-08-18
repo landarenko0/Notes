@@ -29,7 +29,7 @@ import java.time.LocalDate
 fun NoteCard(
     note: Note,
     modifier: Modifier,
-    noteSelectionEnabled: Boolean,
+    selectionEnabled: Boolean,
     isChecked: Boolean,
     onClick: (Long) -> Unit,
     onLongClick: (Long) -> Unit
@@ -69,7 +69,7 @@ fun NoteCard(
                 DateText(date = note.creationDate)
             }
 
-            if (noteSelectionEnabled) {
+            if (selectionEnabled) {
                 Checkbox(
                     checked = isChecked,
                     onCheckedChange = { onClick(note.id) },

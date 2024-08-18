@@ -17,17 +17,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.example.notes.navigation.AppScreens
-import com.example.notes.presentation.mainscreen.components.AddNoteOrTaskBottomSheet
 import com.example.notes.util.Page
 import com.example.notes.presentation.mainscreen.components.TopAppBarTitle
 import com.example.notes.presentation.mainscreen.components.notes.NotesList
@@ -118,7 +113,7 @@ fun MainScreen(navController: NavController) {
             when (Page.getPage(index)) {
                 Page.NOTES -> NotesList(
                     notes = viewModel.notes,
-                    noteSelectionEnabled = viewModel.selectionEnabled.value,
+                    selectionEnabled = viewModel.selectionEnabled.value,
                     checkedNotes = viewModel.selectedNotes,
                     onNoteClick = { noteId ->
                         if (viewModel.selectionEnabled.value) {

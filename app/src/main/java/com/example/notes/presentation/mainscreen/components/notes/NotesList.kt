@@ -18,7 +18,7 @@ import com.example.notes.domain.models.Note
 @Composable
 fun NotesList(
     notes: List<Note>,
-    noteSelectionEnabled: Boolean,
+    selectionEnabled: Boolean,
     checkedNotes: List<Long>,
     onNoteClick: (Long) -> Unit,
     onLongNoteClick: (Long) -> Unit
@@ -39,7 +39,7 @@ fun NotesList(
                         NoteCard(
                             note = note,
                             modifier = Modifier,
-                            noteSelectionEnabled = noteSelectionEnabled,
+                            selectionEnabled = selectionEnabled,
                             isChecked = note.id in checkedNotes,
                             onClick = onNoteClick,
                             onLongClick = onLongNoteClick
