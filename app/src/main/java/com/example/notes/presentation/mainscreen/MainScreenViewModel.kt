@@ -11,6 +11,7 @@ import com.example.notes.domain.usecases.TaskUseCases
 import com.example.notes.util.replaceAllWith
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
 import javax.inject.Inject
 
 @HiltViewModel
@@ -25,17 +26,19 @@ class MainScreenViewModel @Inject constructor(
     private val _tasks = mutableStateListOf<Task>()
     val tasks: List<Task> = _tasks
 
-    private val _selectedNotes = mutableStateListOf<Long>()
-    val selectedNotes: List<Long> = _selectedNotes
+    private val _checkedItems = mutableStateListOf<Long>()
+    val checkedItems: List<Long> = _checkedItems
 
-    private val _selectedTasks = mutableStateListOf<Long>()
-    val selectedTasks: List<Long> = _selectedTasks
+    var selectedTask: Task? = null
 
     val selectionEnabled = mutableStateOf(false)
 
     init {
         viewModelScope.launch {
             getAllNotes()
+        }
+
+        viewModelScope.launch {
             getAllTasks()
         }
     }
@@ -54,27 +57,53 @@ class MainScreenViewModel @Inject constructor(
 
     fun deleteNotes() {
         viewModelScope.launch {
-            noteUseCases.deleteNotes(_selectedNotes)
-            clearSelectedNotes()
+            noteUseCases.deleteNotes(_checkedItems)
+            clearCheckedItems()
         }
     }
 
     fun deleteTasks() {
         viewModelScope.launch {
-            taskUseCases.deleteTasks(_selectedTasks)
-            clearSelectedTasks()
+            taskUseCases.deleteTasks(_checkedItems)
+            clearCheckedItems()
         }
     }
 
-    fun addNoteToSelectedNotes(noteId: Long) = _selectedNotes.add(noteId)
+    fun saveTask(text: String, notificationTime: LocalDateTime?) {
+        viewModelScope.launch {
+            when {
+                selectedTask == null -> {
+                    taskUseCases.addTask(
+                        Task(
+                            text = text,
+                            notificationTime = notificationTime
+                        )
+                    )
+                }
 
-    fun removeNoteFromSelectedNotes(noteId: Long) = _selectedNotes.remove(noteId)
+                else -> {
+                    taskUseCases.updateTask(
+                        selectedTask!!.copy(
+                            text = text,
+                            notificationTime = notificationTime
+                        )
+                    )
+                }
+            }
+        }
+    }
 
-    fun clearSelectedNotes() = _selectedNotes.clear()
+    fun markTaskCompleted(task: Task, isDone: Boolean) {
+        viewModelScope.launch {
+            taskUseCases.updateTask(
+                task.copy(isDone = isDone)
+            )
+        }
+    }
 
-    fun addTaskToSelectedTasks(taskId: Long) = _selectedTasks.add(taskId)
+    fun checkItem(itemId: Long) = _checkedItems.add(itemId)
 
-    fun removeTaskFromSelectedTasks(taskId: Long) = _selectedTasks.remove(taskId)
+    fun removeItemFromChecked(itemId: Long) = _checkedItems.remove(itemId)
 
-    fun clearSelectedTasks() = _selectedTasks.clear()
+    fun clearCheckedItems() = _checkedItems.clear()
 }
