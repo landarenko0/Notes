@@ -63,7 +63,7 @@ fun MainScreen(navController: NavController) {
                 },
                 title = {
                     TopAppBarTitle(
-                        currentPage = if (pagerState.currentPage == Page.NOTES.index) Page.NOTES else Page.TASKS,
+                        currentPage = Page.getPage(pagerState.currentPage),
                         modifier = Modifier.fillMaxWidth(),
                         noteSelectionEnabled = viewModel.selectionEnabled.value,
                         selectedNotes = viewModel.selectedNotes.size
@@ -114,9 +114,9 @@ fun MainScreen(navController: NavController) {
             state = pagerState,
             pageSpacing = 10.dp,
             userScrollEnabled = !viewModel.selectionEnabled.value
-        ) { page ->
-            when (page) {
-                Page.NOTES.index -> NotesList(
+        ) { index ->
+            when (Page.getPage(index)) {
+                Page.NOTES -> NotesList(
                     notes = viewModel.notes,
                     noteSelectionEnabled = viewModel.selectionEnabled.value,
                     checkedNotes = viewModel.selectedNotes,
@@ -137,7 +137,7 @@ fun MainScreen(navController: NavController) {
                     }
                 )
 
-                Page.TASKS.index -> TasksList(tasks = viewModel.tasks)
+                Page.TASKS -> TasksList(tasks = viewModel.tasks)
             }
         }
     }

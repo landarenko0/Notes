@@ -1,6 +1,12 @@
 package com.example.notes.util
 
-enum class Page(val index: Int) {
-    NOTES(0),
-    TASKS(1)
+enum class Page {
+    NOTES,
+    TASKS;
+
+    companion object {
+        fun getPage(index: Int): Page {
+            return Page.entries[index]
+        }
+    }
 }
