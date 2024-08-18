@@ -73,21 +73,17 @@ class MainScreenViewModel @Inject constructor(
         viewModelScope.launch {
             when {
                 selectedTask == null -> {
-                    taskUseCases.addTask(
-                        Task(
-                            text = text,
-                            notificationTime = notificationTime
-                        )
-                    )
+                    Task(
+                        text = text,
+                        notificationTime = notificationTime
+                    ).also { taskUseCases.addTask(it) }
                 }
 
                 else -> {
-                    taskUseCases.updateTask(
-                        selectedTask!!.copy(
-                            text = text,
-                            notificationTime = notificationTime
-                        )
-                    )
+                    selectedTask!!.copy(
+                        text = text,
+                        notificationTime = notificationTime
+                    ).also { taskUseCases.updateTask(it) }
                 }
             }
 
