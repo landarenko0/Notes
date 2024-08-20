@@ -91,10 +91,10 @@ class MainScreenViewModel @Inject constructor(
         }
     }
 
-    fun markTaskCompleted(task: Task, isDone: Boolean) {
+    fun markTaskCompleted(task: Task, completed: Boolean) {
         viewModelScope.launch {
             taskUseCases.updateTask(
-                task.copy(isDone = isDone)
+                task.copy(isDone = completed)
             )
         }
     }

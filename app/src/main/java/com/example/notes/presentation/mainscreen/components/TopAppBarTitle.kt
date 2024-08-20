@@ -21,7 +21,7 @@ import com.example.notes.presentation.ui.theme.iconOutlinedTint
 fun TopAppBarTitle(
     currentPage: Page,
     modifier: Modifier = Modifier,
-    noteSelectionEnabled: Boolean,
+    selectionEnabled: Boolean,
     selectedNotes: Int
 ) {
     val currentPageIsNotes = currentPage == Page.NOTES
@@ -32,7 +32,7 @@ fun TopAppBarTitle(
         horizontalArrangement = Arrangement.Center,
         modifier = modifier
     ) {
-        if (noteSelectionEnabled) {
+        if (selectionEnabled) {
             Text(
                 text = when (selectedNotes) {
                     0 -> "Выберите объекты"
