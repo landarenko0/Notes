@@ -15,10 +15,14 @@ enum class Month(val text: String) {
     DECEMBER("Декабрь");
 
     companion object {
-        fun getMonthText(month: Int): String {
+        fun getMonthText(month: Int, shortName: Boolean = false): String {
             if (month !in 1..12) throw IllegalArgumentException("Incorrect month")
 
-            return Month.entries[month - 1].text
+            return if (shortName) {
+                Month.entries[month - 1].text.substring(0..2)
+            } else {
+                Month.entries[month - 1].text
+            }
         }
     }
 }
