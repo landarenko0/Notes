@@ -16,3 +16,5 @@ val onPrimaryContainer = Color.White
 
 val iconFilledTint = Color(0xFFEDB600)
 val iconOutlinedTint = Color.Gray
+
+val notificationCardBackground = Color(0xFFEEEEEE)
