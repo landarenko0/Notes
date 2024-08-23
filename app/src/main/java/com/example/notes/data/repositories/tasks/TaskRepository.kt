@@ -11,5 +11,5 @@ interface TaskRepository {
 
     suspend fun updateTask(task: Task)
 
-    suspend fun deleteTasks(tasks: List<Long>)
+    suspend fun deleteTasks(tasks: List<Int>)
 }

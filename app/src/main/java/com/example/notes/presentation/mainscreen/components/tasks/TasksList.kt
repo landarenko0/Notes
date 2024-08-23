@@ -21,14 +21,14 @@ import java.time.LocalDateTime
 fun TasksList(
     tasks: List<Task>,
     selectionEnabled: Boolean,
-    checkedTasks: List<Long>,
+    checkedTasks: List<Int>,
     selectedTask: Task?,
     isBottomSheetOpen: Boolean,
     onDialogDismiss: () -> Unit,
     saveTask: (text: String, notificationTime: LocalDateTime?) -> Unit,
     markTaskCompleted: (Task, Boolean) -> Unit,
     onTaskClick: (Task) -> Unit,
-    onLongTaskClick: (Long) -> Unit
+    onLongTaskClick: (Int) -> Unit
 ) {
     Column(
         modifier = Modifier

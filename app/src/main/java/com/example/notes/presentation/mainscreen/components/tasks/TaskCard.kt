@@ -32,7 +32,7 @@ fun TaskCard(
     isChecked: Boolean,
     onClick: (Task) -> Unit,
     markTaskCompleted: (Task, Boolean) -> Unit,
-    onLongClick: (Long) -> Unit,
+    onLongClick: (Int) -> Unit,
 ) {
     Card(
         modifier = modifier

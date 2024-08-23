@@ -26,8 +26,8 @@ class MainScreenViewModel @Inject constructor(
     private val _tasks = mutableStateListOf<Task>()
     val tasks: List<Task> = _tasks
 
-    private val _checkedItems = mutableStateListOf<Long>()
-    val checkedItems: List<Long> = _checkedItems
+    private val _checkedItems = mutableStateListOf<Int>()
+    val checkedItems: List<Int> = _checkedItems
 
     var selectedTask: Task? = null
 
@@ -99,9 +99,9 @@ class MainScreenViewModel @Inject constructor(
         }
     }
 
-    fun checkItem(itemId: Long) = _checkedItems.add(itemId)
+    fun checkItem(itemId: Int) = _checkedItems.add(itemId)
 
-    fun removeItemFromChecked(itemId: Long) = _checkedItems.remove(itemId)
+    fun removeItemFromChecked(itemId: Int) = _checkedItems.remove(itemId)
 
     fun clearCheckedItems() = _checkedItems.clear()
 }

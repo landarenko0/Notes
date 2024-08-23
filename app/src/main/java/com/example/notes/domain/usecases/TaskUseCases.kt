@@ -23,5 +23,5 @@ class UpdateTaskInteractor(private val repository: TaskRepository) {
 }
 
 class DeleteTasksInteractor(private val repository: TaskRepository) {
-    suspend operator fun invoke(tasks: List<Long>) = repository.deleteTasks(tasks)
+    suspend operator fun invoke(tasks: List<Int>) = repository.deleteTasks(tasks)
 }

@@ -19,9 +19,9 @@ import com.example.notes.domain.models.Note
 fun NotesList(
     notes: List<Note>,
     selectionEnabled: Boolean,
-    checkedNotes: List<Long>,
-    onNoteClick: (Long) -> Unit,
-    onLongNoteClick: (Long) -> Unit
+    checkedNotes: List<Int>,
+    onNoteClick: (Int) -> Unit,
+    onLongNoteClick: (Int) -> Unit
 ) {
     Column(
         modifier = Modifier

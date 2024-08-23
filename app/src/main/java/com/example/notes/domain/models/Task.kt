@@ -6,7 +6,7 @@ import java.time.LocalDateTime
 
 @Entity
 data class Task(
-    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val text: String,
     val isDone: Boolean = false,
     val notificationTime: LocalDateTime? = null
