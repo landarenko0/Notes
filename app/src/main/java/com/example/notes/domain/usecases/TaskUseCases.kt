@@ -2,6 +2,7 @@ package com.example.notes.domain.usecases
 
 import com.example.notes.data.repositories.tasks.TaskRepository
 import com.example.notes.domain.models.Task
+import java.util.UUID
 
 class TaskUseCases(
     val getAllTasks: GetAllTasksInteractor,
@@ -23,5 +24,5 @@ class UpdateTaskInteractor(private val repository: TaskRepository) {
 }
 
 class DeleteTasksInteractor(private val repository: TaskRepository) {
-    suspend operator fun invoke(tasks: List<Int>) = repository.deleteTasks(tasks)
+    suspend operator fun invoke(tasks: List<UUID>) = repository.deleteTasks(tasks)
 }

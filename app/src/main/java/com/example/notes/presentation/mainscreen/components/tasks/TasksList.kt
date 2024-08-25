@@ -16,19 +16,20 @@ import androidx.compose.ui.unit.dp
 import com.example.notes.domain.models.Task
 import com.example.notes.presentation.mainscreen.components.SaveTaskDialog
 import java.time.LocalDateTime
+import java.util.UUID
 
 @Composable
 fun TasksList(
     tasks: List<Task>,
     selectionEnabled: Boolean,
-    checkedTasks: List<Int>,
+    checkedTasks: List<UUID>,
     selectedTask: Task?,
     isBottomSheetOpen: Boolean,
     onDialogDismiss: () -> Unit,
     saveTask: (text: String, notificationTime: LocalDateTime?) -> Unit,
     markTaskCompleted: (Task, Boolean) -> Unit,
     onTaskClick: (Task) -> Unit,
-    onLongTaskClick: (Int) -> Unit
+    onLongTaskClick: (UUID) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -47,7 +48,7 @@ fun TasksList(
                             task = task,
                             modifier = Modifier,
                             selectionEnabled = selectionEnabled,
-                            isChecked = task.id in checkedTasks,
+                            isChecked = task.uuid in checkedTasks,
                             onClick = onTaskClick,
                             markTaskCompleted = markTaskCompleted,
                             onLongClick = onLongTaskClick

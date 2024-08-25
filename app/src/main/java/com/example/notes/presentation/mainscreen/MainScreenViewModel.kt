@@ -13,6 +13,7 @@ import com.example.notes.util.replaceAllWith
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
+import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
@@ -28,8 +29,11 @@ class MainScreenViewModel @Inject constructor(
     private val _tasks = mutableStateListOf<Task>()
     val tasks: List<Task> = _tasks
 
-    private val _checkedItems = mutableStateListOf<Int>()
-    val checkedItems: List<Int> = _checkedItems
+    private val _checkedNotes = mutableStateListOf<Int>()
+    val checkedNotes: List<Int> = _checkedNotes
+
+    private val _checkedTasks = mutableStateListOf<UUID>()
+    val checkedTasks: List<UUID> = _checkedTasks
 
     var selectedTask: Task? = null
 
@@ -59,22 +63,15 @@ class MainScreenViewModel @Inject constructor(
 
     fun deleteNotes() {
         viewModelScope.launch {
-            noteUseCases.deleteNotes(_checkedItems)
+            noteUseCases.deleteNotes(_checkedNotes)
             clearCheckedItems()
         }
     }
 
     fun deleteTasks() {
         viewModelScope.launch {
-            taskUseCases.deleteTasks(_checkedItems)
-
-//            val checkedTaskUuids = mutableListOf<UUID>().apply {
-//                _tasks.forEach {
-//                    if (it.id in _checkedItems) add(it.uuid)
-//                }
-//            }
-
-            alarmScheduler.cancel(_checkedItems)
+            taskUseCases.deleteTasks(_checkedTasks)
+            alarmScheduler.cancel(_checkedTasks)
             clearCheckedItems()
         }
     }
@@ -100,7 +97,7 @@ class MainScreenViewModel @Inject constructor(
                         taskUseCases.updateTask(it)
 
                         if (notificationTime != null) alarmScheduler.schedule(it)
-                        else alarmScheduler.cancel(it.id)
+                        else alarmScheduler.cancel(it.uuid)
                     }
                 }
             }
@@ -118,9 +115,16 @@ class MainScreenViewModel @Inject constructor(
         }
     }
 
-    fun checkItem(itemId: Int) = _checkedItems.add(itemId)
+    fun checkNote(noteId: Int) = _checkedNotes.add(noteId)
 
-    fun removeItemFromChecked(itemId: Int) = _checkedItems.remove(itemId)
+    fun checkTask(taskUUID: UUID) = _checkedTasks.add(taskUUID)
 
-    fun clearCheckedItems() = _checkedItems.clear()
+    fun removeNoteFromChecked(noteId: Int) = _checkedNotes.remove(noteId)
+
+    fun removeTaskFromChecked(taskUUID: UUID) = _checkedTasks.remove(taskUUID)
+
+    fun clearCheckedItems() {
+        _checkedNotes.clear()
+        _checkedTasks.clear()
+    }
 }

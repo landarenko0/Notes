@@ -7,6 +7,7 @@ import android.content.Intent
 import com.example.notes.data.receivers.AlarmReceiver
 import com.example.notes.domain.models.Task
 import java.time.ZoneId
+import java.util.UUID
 
 class AlarmSchedulerImpl(
     private val context: Context,
@@ -18,7 +19,7 @@ class AlarmSchedulerImpl(
 
         val pendingIntent = PendingIntent.getBroadcast(
             context,
-            task.id,
+            task.uuid.hashCode(),
             Intent(context, AlarmReceiver::class.java),
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
@@ -30,25 +31,25 @@ class AlarmSchedulerImpl(
         )
     }
 
-    override fun cancel(taskId: Int) {
+    override fun cancel(taskUuid: UUID) {
         alarmManager.cancel(
             PendingIntent.getBroadcast(
                 context,
-                taskId,
+                taskUuid.hashCode(),
                 Intent(context, AlarmReceiver::class.java),
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
         )
     }
 
-    override fun cancel(taskIds: List<Int>) {
+    override fun cancel(taskUuids: List<UUID>) {
         val intent = Intent(context, AlarmReceiver::class.java)
 
-        taskIds.forEach { taskId ->
+        taskUuids.forEach { taskUuid ->
             alarmManager.cancel(
                 PendingIntent.getBroadcast(
                     context,
-                    taskId,
+                    taskUuid.hashCode(),
                     intent,
                     PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
                 )

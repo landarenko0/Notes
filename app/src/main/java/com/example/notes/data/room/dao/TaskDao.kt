@@ -6,6 +6,7 @@ import androidx.room.Query
 import androidx.room.Update
 import com.example.notes.domain.models.Task
 import kotlinx.coroutines.flow.Flow
+import java.util.UUID
 
 @Dao
 interface TaskDao {
@@ -19,6 +20,6 @@ interface TaskDao {
     @Update
     suspend fun updateTask(task: Task)
 
-    @Query("DELETE FROM task WHERE id IN (:tasks)")
-    suspend fun deleteTasks(tasks: List<Int>)
+    @Query("DELETE FROM task WHERE uuid IN (:tasks)")
+    suspend fun deleteTasks(tasks: List<UUID>)
 }

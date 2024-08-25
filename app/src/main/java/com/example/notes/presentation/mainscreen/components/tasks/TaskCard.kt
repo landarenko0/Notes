@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.notes.domain.models.Task
 import java.time.LocalDateTime
+import java.util.UUID
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -32,7 +33,7 @@ fun TaskCard(
     isChecked: Boolean,
     onClick: (Task) -> Unit,
     markTaskCompleted: (Task, Boolean) -> Unit,
-    onLongClick: (Int) -> Unit,
+    onLongClick: (UUID) -> Unit,
 ) {
     Card(
         modifier = modifier
@@ -40,7 +41,7 @@ fun TaskCard(
             .clip(RoundedCornerShape(16.dp))
             .combinedClickable(
                 onClick = { onClick(task) },
-                onLongClick = { onLongClick(task.id) }
+                onLongClick = { onLongClick(task.uuid) }
             )
     ) {
         Row(

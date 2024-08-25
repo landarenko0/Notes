@@ -50,13 +50,19 @@ fun MainScreen(navController: NavController) {
                         currentPage = Page.getPage(pagerState.currentPage),
                         modifier = Modifier.fillMaxWidth(),
                         selectionEnabled = viewModel.selectionEnabled.value,
-                        selectedNotes = viewModel.checkedItems.size
+                        selectedNotes = when (Page.getPage(pagerState.currentPage)) {
+                            Page.NOTES -> viewModel.checkedNotes.size
+                            Page.TASKS -> viewModel.checkedTasks.size
+                        }
                     )
                 },
                 actions = {
                     DeleteSelectedItemsIcon(
                         selectionEnabled = viewModel.selectionEnabled.value,
-                        enabled = viewModel.checkedItems.isNotEmpty(),
+                        enabled = when (Page.getPage(pagerState.currentPage)) {
+                            Page.NOTES -> viewModel.checkedNotes.isNotEmpty()
+                            Page.TASKS -> viewModel.checkedTasks.isNotEmpty()
+                        },
                         onClick = {
                             when (Page.getPage(pagerState.currentPage)) {
                                 Page.NOTES -> viewModel.deleteNotes()
@@ -80,7 +86,7 @@ fun MainScreen(navController: NavController) {
                 enabled = !viewModel.selectionEnabled.value,
                 onClick = {
                     when (Page.getPage(pagerState.currentPage)) {
-                        Page.NOTES -> navController.navigate(AppScreens.CreateNoteScreen(null))
+                        Page.NOTES -> navController.navigate(AppScreens.CreateNoteScreen())
                         Page.TASKS -> isSaveTaskDialogOpen.value = true
                     }
                 }
@@ -99,13 +105,13 @@ fun MainScreen(navController: NavController) {
                 Page.NOTES -> NotesList(
                     notes = viewModel.notes,
                     selectionEnabled = viewModel.selectionEnabled.value,
-                    checkedNotes = viewModel.checkedItems,
+                    checkedNotes = viewModel.checkedNotes,
                     onNoteClick = { noteId ->
                         if (viewModel.selectionEnabled.value) {
-                            if (noteId in viewModel.checkedItems) {
-                                viewModel.removeItemFromChecked(noteId)
+                            if (noteId in viewModel.checkedNotes) {
+                                viewModel.removeNoteFromChecked(noteId)
                             } else {
-                                viewModel.checkItem(noteId)
+                                viewModel.checkNote(noteId)
                             }
                         } else {
                             navController.navigate(AppScreens.CreateNoteScreen(noteId))
@@ -113,7 +119,7 @@ fun MainScreen(navController: NavController) {
                     },
                     onLongNoteClick = {
                         if (!viewModel.selectionEnabled.value) {
-                            viewModel.checkItem(it)
+                            viewModel.checkNote(it)
                             viewModel.selectionEnabled.value = true
                         }
                     }
@@ -122,7 +128,7 @@ fun MainScreen(navController: NavController) {
                 Page.TASKS -> TasksList(
                     tasks = viewModel.tasks,
                     selectionEnabled = viewModel.selectionEnabled.value,
-                    checkedTasks = viewModel.checkedItems,
+                    checkedTasks = viewModel.checkedTasks,
                     selectedTask = viewModel.selectedTask,
                     isBottomSheetOpen = isSaveTaskDialogOpen.value,
                     onDialogDismiss = {
@@ -136,10 +142,10 @@ fun MainScreen(navController: NavController) {
                     markTaskCompleted = viewModel::markTaskCompleted,
                     onTaskClick = { task ->
                         if (viewModel.selectionEnabled.value) {
-                            if (task.id in viewModel.checkedItems) {
-                                viewModel.removeItemFromChecked(task.id)
+                            if (task.uuid in viewModel.checkedTasks) {
+                                viewModel.removeTaskFromChecked(task.uuid)
                             } else {
-                                viewModel.checkItem(task.id)
+                                viewModel.checkTask(task.uuid)
                             }
                         } else {
                             viewModel.selectedTask = task
@@ -148,7 +154,7 @@ fun MainScreen(navController: NavController) {
                     },
                     onLongTaskClick = {
                         if (!viewModel.selectionEnabled.value) {
-                            viewModel.checkItem(it)
+                            viewModel.checkTask(it)
                             viewModel.selectionEnabled.value = true
                         }
                     }
