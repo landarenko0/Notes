@@ -11,9 +11,10 @@ import com.example.notes.domain.models.Note
 import com.example.notes.domain.models.Task
 import com.example.notes.util.LocalDateConverter
 import com.example.notes.util.LocalDateTimeConverter
+import com.example.notes.util.UUIDConverter
 
 @Database(entities = [Note::class, Task::class], version = 1)
-@TypeConverters(LocalDateTimeConverter::class, LocalDateConverter::class)
+@TypeConverters(LocalDateTimeConverter::class, LocalDateConverter::class, UUIDConverter::class)
 abstract class NotesDatabase : RoomDatabase() {
 
     abstract fun notesDao(): NoteDao

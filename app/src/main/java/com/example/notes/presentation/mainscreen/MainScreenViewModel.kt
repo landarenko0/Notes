@@ -4,6 +4,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.notes.data.scheduler.AlarmScheduler
 import com.example.notes.domain.models.Note
 import com.example.notes.domain.models.Task
 import com.example.notes.domain.usecases.NoteUseCases
@@ -17,7 +18,8 @@ import javax.inject.Inject
 @HiltViewModel
 class MainScreenViewModel @Inject constructor(
     private val noteUseCases: NoteUseCases,
-    private val taskUseCases: TaskUseCases
+    private val taskUseCases: TaskUseCases,
+    private val alarmScheduler: AlarmScheduler
 ) : ViewModel() {
 
     private val _notes = mutableStateListOf<Note>()
@@ -65,6 +67,14 @@ class MainScreenViewModel @Inject constructor(
     fun deleteTasks() {
         viewModelScope.launch {
             taskUseCases.deleteTasks(_checkedItems)
+
+//            val checkedTaskUuids = mutableListOf<UUID>().apply {
+//                _tasks.forEach {
+//                    if (it.id in _checkedItems) add(it.uuid)
+//                }
+//            }
+
+            alarmScheduler.cancel(_checkedItems)
             clearCheckedItems()
         }
     }
@@ -76,14 +86,22 @@ class MainScreenViewModel @Inject constructor(
                     Task(
                         text = text,
                         notificationTime = notificationTime
-                    ).also { taskUseCases.addTask(it) }
+                    ).also {
+                        taskUseCases.addTask(it)
+                        if (notificationTime != null) alarmScheduler.schedule(it)
+                    }
                 }
 
                 else -> {
                     selectedTask!!.copy(
                         text = text,
                         notificationTime = notificationTime
-                    ).also { taskUseCases.updateTask(it) }
+                    ).also {
+                        taskUseCases.updateTask(it)
+
+                        if (notificationTime != null) alarmScheduler.schedule(it)
+                        else alarmScheduler.cancel(it.id)
+                    }
                 }
             }
 
@@ -95,6 +113,7 @@ class MainScreenViewModel @Inject constructor(
         viewModelScope.launch {
             taskUseCases.updateTask(
                 task.copy(isDone = completed)
+                // TODO: Добавить или удалить аларм в зависимости от completed
             )
         }
     }

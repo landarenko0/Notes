@@ -1,5 +1,6 @@
 package com.example.notes.di
 
+import android.app.AlarmManager
 import android.content.Context
 import com.example.notes.data.repositories.notes.NoteRepository
 import com.example.notes.data.repositories.notes.NoteRepositoryImpl
@@ -8,6 +9,8 @@ import com.example.notes.data.repositories.tasks.TaskRepositoryImpl
 import com.example.notes.data.room.NotesDatabase
 import com.example.notes.data.room.dao.NoteDao
 import com.example.notes.data.room.dao.TaskDao
+import com.example.notes.data.scheduler.AlarmScheduler
+import com.example.notes.data.scheduler.AlarmSchedulerImpl
 import com.example.notes.domain.usecases.AddNoteInteractor
 import com.example.notes.domain.usecases.AddTaskInteractor
 import com.example.notes.domain.usecases.DeleteNotesInteractor
@@ -70,5 +73,13 @@ object NotesModule {
             addTask = AddTaskInteractor(taskRepository),
             updateTask = UpdateTaskInteractor(taskRepository),
             deleteTasks = DeleteTasksInteractor(taskRepository)
+        )
+
+    @Singleton
+    @Provides
+    fun provideAlarmScheduler(@ApplicationContext context: Context): AlarmScheduler =
+        AlarmSchedulerImpl(
+            context = context,
+            alarmManager = context.getSystemService(AlarmManager::class.java)
         )
 }
