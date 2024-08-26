@@ -1,7 +1,10 @@
 package com.example.notes.di
 
 import android.app.AlarmManager
+import android.app.NotificationManager
 import android.content.Context
+import com.example.notes.data.notifications.NotificationService
+import com.example.notes.data.notifications.TaskNotificationService
 import com.example.notes.data.repositories.notes.NoteRepository
 import com.example.notes.data.repositories.notes.NoteRepositoryImpl
 import com.example.notes.data.repositories.tasks.TaskRepository
@@ -81,5 +84,13 @@ object NotesModule {
         AlarmSchedulerImpl(
             context = context,
             alarmManager = context.getSystemService(AlarmManager::class.java)
+        )
+
+    @Singleton
+    @Provides
+    fun provideNotificationService(@ApplicationContext context: Context): NotificationService =
+        TaskNotificationService(
+            context = context,
+            notificationManager = context.getSystemService(NotificationManager::class.java)
         )
 }

@@ -12,7 +12,7 @@ import java.util.UUID
 class AlarmSchedulerImpl(
     private val context: Context,
     private val alarmManager: AlarmManager
-): AlarmScheduler {
+) : AlarmScheduler {
 
     override fun schedule(task: Task) {
         if (task.notificationTime == null) return
@@ -20,7 +20,10 @@ class AlarmSchedulerImpl(
         val pendingIntent = PendingIntent.getBroadcast(
             context,
             task.uuid.hashCode(),
-            Intent(context, AlarmReceiver::class.java),
+            Intent(context, AlarmReceiver::class.java).apply {
+                putExtra(AlarmReceiver.TASK_TITLE_TAG, task.text)
+                putExtra(AlarmReceiver.TASK_ID_TAG, task.uuid.hashCode())
+            },
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
