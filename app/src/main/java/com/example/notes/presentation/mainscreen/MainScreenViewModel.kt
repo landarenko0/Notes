@@ -108,10 +108,14 @@ class MainScreenViewModel @Inject constructor(
 
     fun markTaskCompleted(task: Task, completed: Boolean) {
         viewModelScope.launch {
-            taskUseCases.updateTask(
-                task.copy(isDone = completed)
-                // TODO: Добавить или удалить аларм в зависимости от completed
-            )
+            task.copy(
+                isDone = completed
+            ).also {
+                taskUseCases.updateTask(it)
+
+                if (completed) alarmScheduler.cancel(it.uuid)
+                else alarmScheduler.schedule(it)
+            }
         }
     }
 
