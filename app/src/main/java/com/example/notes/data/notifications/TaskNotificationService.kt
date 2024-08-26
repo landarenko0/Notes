@@ -26,6 +26,7 @@ class TaskNotificationService(
             setContentTitle("Напоминание")
             setContentText(notificationText)
             setContentIntent(pendingIntent)
+            setAutoCancel(true)
         }.build().also { notification ->
             notificationManager.notify(notificationId, notification)
         }
