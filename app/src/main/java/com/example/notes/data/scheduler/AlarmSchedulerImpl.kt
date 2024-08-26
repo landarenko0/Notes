@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import com.example.notes.data.receivers.AlarmReceiver
 import com.example.notes.domain.models.Task
+import java.time.LocalDateTime
 import java.time.ZoneId
 import java.util.UUID
 
@@ -15,7 +16,7 @@ class AlarmSchedulerImpl(
 ) : AlarmScheduler {
 
     override fun schedule(task: Task) {
-        if (task.notificationTime == null) return
+        if (task.notificationTime == null || LocalDateTime.now() > task.notificationTime) return
 
         val pendingIntent = PendingIntent.getBroadcast(
             context,
