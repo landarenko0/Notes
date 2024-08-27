@@ -69,7 +69,10 @@ fun SaveTaskDialog(
     val focusRequester = remember { FocusRequester() }
 
     val datePickerState = rememberDatePickerState(initialSelectedDateMillis = selectedTask?.notificationTime?.toInstant(ZoneOffset.UTC)?.toEpochMilli())
-    val timePickerState = rememberTimePickerState()
+    val timePickerState = rememberTimePickerState(
+        initialHour = selectedTask?.notificationTime?.hour ?: 12,
+        initialMinute = selectedTask?.notificationTime?.minute ?: 0
+    )
 
     var userSelectedDate by remember { mutableStateOf(selectedTask?.notificationTime != null) }
 
