@@ -76,7 +76,11 @@ class MainScreenViewModel @Inject constructor(
         }
     }
 
-    fun saveTask(text: String, notificationTime: LocalDateTime?) {
+    fun saveTask(
+        text: String,
+        notificationTime: LocalDateTime?,
+        hasNotificationPermission: Boolean
+    ) {
         viewModelScope.launch {
             when {
                 selectedTask == null -> {
@@ -85,7 +89,9 @@ class MainScreenViewModel @Inject constructor(
                         notificationTime = notificationTime
                     ).also {
                         taskUseCases.addTask(it)
-                        if (notificationTime != null) alarmScheduler.schedule(it)
+                        if (notificationTime != null && hasNotificationPermission) {
+                            alarmScheduler.schedule(it)
+                        }
                     }
                 }
 
@@ -96,8 +102,9 @@ class MainScreenViewModel @Inject constructor(
                     ).also {
                         taskUseCases.updateTask(it)
 
-                        if (notificationTime != null) alarmScheduler.schedule(it)
-                        else alarmScheduler.cancel(it.uuid)
+                        if (notificationTime != null && hasNotificationPermission) {
+                            alarmScheduler.schedule(it)
+                        } else alarmScheduler.cancel(it.uuid)
                     }
                 }
             }

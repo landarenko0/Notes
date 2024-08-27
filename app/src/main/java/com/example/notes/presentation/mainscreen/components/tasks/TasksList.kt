@@ -26,7 +26,7 @@ fun TasksList(
     selectedTask: Task?,
     isBottomSheetOpen: Boolean,
     onDialogDismiss: () -> Unit,
-    saveTask: (text: String, notificationTime: LocalDateTime?) -> Unit,
+    saveTask: (text: String, notificationTime: LocalDateTime?, hasNotificationPermission: Boolean) -> Unit,
     markTaskCompleted: (Task, Boolean) -> Unit,
     onTaskClick: (Task) -> Unit,
     onLongTaskClick: (UUID) -> Unit

@@ -80,7 +80,7 @@ fun MainScreen(navController: NavController) {
         },
         floatingActionButton = {
             MainScreenFloatingButton(
-                modifier =  Modifier
+                modifier = Modifier
                     .padding(bottom = 30.dp, end = 20.dp)
                     .size(60.dp),
                 enabled = !viewModel.selectionEnabled.value,
@@ -139,8 +139,8 @@ fun MainScreen(navController: NavController) {
                         isSaveTaskDialogOpen.value = false
                         viewModel.selectedTask = null
                     },
-                    saveTask = { taskText, notificationTime ->
-                        viewModel.saveTask(taskText, notificationTime)
+                    saveTask = { taskText, notificationTime, hasNotificationPermission ->
+                        viewModel.saveTask(taskText, notificationTime, hasNotificationPermission)
                         isSaveTaskDialogOpen.value = false
                     },
                     markTaskCompleted = viewModel::markTaskCompleted,

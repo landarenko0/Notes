@@ -1,5 +1,10 @@
 package com.example.notes.presentation.mainscreen.components
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -36,12 +41,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.core.content.ContextCompat
 import com.example.notes.domain.models.Task
 import com.example.notes.presentation.ui.theme.notificationCardBackground
 import com.example.notes.util.Month
@@ -52,10 +59,12 @@ import java.time.ZoneOffset
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SaveTaskDialog(
-    onSaveButtonClick: (text: String, notificationTime: LocalDateTime?) -> Unit,
+    onSaveButtonClick: (text: String, notificationTime: LocalDateTime?, hasNotificationPermission: Boolean) -> Unit,
     onDismiss: () -> Unit,
     selectedTask: Task?
 ) {
+    val context = LocalContext.current
+
     var taskText by remember { mutableStateOf(selectedTask?.text ?: "") }
     val focusRequester = remember { FocusRequester() }
 
@@ -74,6 +83,22 @@ fun SaveTaskDialog(
             minute = timePickerState.minute
         )
     } ?: LocalDateTime.now()
+
+    var hasNotificationPermission by remember {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            mutableStateOf(
+                ContextCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) == PackageManager.PERMISSION_GRANTED
+            )
+        } else mutableStateOf(true)
+    }
+
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+        onResult = { hasNotificationPermission = it }
+    )
 
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
@@ -121,7 +146,15 @@ fun SaveTaskDialog(
                             clearSelectedDay = { userSelectedDate = false }
                         )
                     } else {
-                        NotificationCard(onClick = { showDatePickerDialog = true })
+                        NotificationCard(
+                            onClick = {
+                                if (!hasNotificationPermission && Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                    permissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                                }
+
+                                showDatePickerDialog = true
+                            }
+                        )
                     }
 
                     Button(
@@ -130,7 +163,8 @@ fun SaveTaskDialog(
                         onClick = {
                             onSaveButtonClick(
                                 taskText,
-                                if (userSelectedDate) selectedDate else null
+                                if (userSelectedDate) selectedDate else null,
+                                hasNotificationPermission
                             )
                         },
                         enabled = taskText.isNotEmpty()
@@ -291,7 +325,7 @@ fun TimePickerDialog(
 @Composable
 private fun SaveTaskDialogTest() {
     SaveTaskDialog(
-        onSaveButtonClick = { _, _ -> },
+        onSaveButtonClick = { _, _, _ -> },
         onDismiss = { },
         selectedTask = null
     )
