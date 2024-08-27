@@ -2,6 +2,7 @@ package com.example.notes.data.repositories.tasks
 
 import com.example.notes.domain.models.Task
 import kotlinx.coroutines.flow.Flow
+import java.util.UUID
 
 interface TaskRepository {
 
@@ -11,5 +12,5 @@ interface TaskRepository {
 
     suspend fun updateTask(task: Task)
 
-    suspend fun deleteTasks(tasks: List<Long>)
+    suspend fun deleteTasks(tasks: List<UUID>)
 }

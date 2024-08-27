@@ -8,5 +8,5 @@ object AppScreens {
     data object MainScreen
 
     @Serializable
-    data class CreateNoteScreen(val noteId: Long?)
+    data class CreateNoteScreen(val noteId: Int? = null)
 }

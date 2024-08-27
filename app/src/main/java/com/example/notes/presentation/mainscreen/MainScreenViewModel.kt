@@ -4,6 +4,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.notes.data.scheduler.AlarmScheduler
 import com.example.notes.domain.models.Note
 import com.example.notes.domain.models.Task
 import com.example.notes.domain.usecases.NoteUseCases
@@ -12,12 +13,14 @@ import com.example.notes.util.replaceAllWith
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
+import java.util.UUID
 import javax.inject.Inject
 
 @HiltViewModel
 class MainScreenViewModel @Inject constructor(
     private val noteUseCases: NoteUseCases,
-    private val taskUseCases: TaskUseCases
+    private val taskUseCases: TaskUseCases,
+    private val alarmScheduler: AlarmScheduler
 ) : ViewModel() {
 
     private val _notes = mutableStateListOf<Note>()
@@ -26,8 +29,11 @@ class MainScreenViewModel @Inject constructor(
     private val _tasks = mutableStateListOf<Task>()
     val tasks: List<Task> = _tasks
 
-    private val _checkedItems = mutableStateListOf<Long>()
-    val checkedItems: List<Long> = _checkedItems
+    private val _checkedNotes = mutableStateListOf<Int>()
+    val checkedNotes: List<Int> = _checkedNotes
+
+    private val _checkedTasks = mutableStateListOf<UUID>()
+    val checkedTasks: List<UUID> = _checkedTasks
 
     var selectedTask: Task? = null
 
@@ -57,33 +63,49 @@ class MainScreenViewModel @Inject constructor(
 
     fun deleteNotes() {
         viewModelScope.launch {
-            noteUseCases.deleteNotes(_checkedItems)
+            noteUseCases.deleteNotes(_checkedNotes)
             clearCheckedItems()
         }
     }
 
     fun deleteTasks() {
         viewModelScope.launch {
-            taskUseCases.deleteTasks(_checkedItems)
+            taskUseCases.deleteTasks(_checkedTasks)
+            alarmScheduler.cancel(_checkedTasks)
             clearCheckedItems()
         }
     }
 
-    fun saveTask(text: String, notificationTime: LocalDateTime?) {
+    fun saveTask(
+        text: String,
+        notificationTime: LocalDateTime?,
+        hasNotificationPermission: Boolean
+    ) {
         viewModelScope.launch {
             when {
                 selectedTask == null -> {
                     Task(
                         text = text,
                         notificationTime = notificationTime
-                    ).also { taskUseCases.addTask(it) }
+                    ).also {
+                        taskUseCases.addTask(it)
+                        if (notificationTime != null && hasNotificationPermission) {
+                            alarmScheduler.schedule(it)
+                        }
+                    }
                 }
 
                 else -> {
                     selectedTask!!.copy(
                         text = text,
                         notificationTime = notificationTime
-                    ).also { taskUseCases.updateTask(it) }
+                    ).also {
+                        taskUseCases.updateTask(it)
+
+                        if (notificationTime != null && hasNotificationPermission) {
+                            alarmScheduler.schedule(it)
+                        } else alarmScheduler.cancel(it.uuid)
+                    }
                 }
             }
 
@@ -93,15 +115,27 @@ class MainScreenViewModel @Inject constructor(
 
     fun markTaskCompleted(task: Task, completed: Boolean) {
         viewModelScope.launch {
-            taskUseCases.updateTask(
-                task.copy(isDone = completed)
-            )
+            task.copy(
+                isDone = completed
+            ).also {
+                taskUseCases.updateTask(it)
+
+                if (completed) alarmScheduler.cancel(it.uuid)
+                else alarmScheduler.schedule(it)
+            }
         }
     }
 
-    fun checkItem(itemId: Long) = _checkedItems.add(itemId)
+    fun checkNote(noteId: Int) = _checkedNotes.add(noteId)
 
-    fun removeItemFromChecked(itemId: Long) = _checkedItems.remove(itemId)
+    fun checkTask(taskUUID: UUID) = _checkedTasks.add(taskUUID)
 
-    fun clearCheckedItems() = _checkedItems.clear()
+    fun removeNoteFromChecked(noteId: Int) = _checkedNotes.remove(noteId)
+
+    fun removeTaskFromChecked(taskUUID: UUID) = _checkedTasks.remove(taskUUID)
+
+    fun clearCheckedItems() {
+        _checkedNotes.clear()
+        _checkedTasks.clear()
+    }
 }

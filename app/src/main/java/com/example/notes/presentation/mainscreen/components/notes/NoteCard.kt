@@ -31,8 +31,8 @@ fun NoteCard(
     modifier: Modifier,
     selectionEnabled: Boolean,
     isChecked: Boolean,
-    onClick: (Long) -> Unit,
-    onLongClick: (Long) -> Unit
+    onClick: (Int) -> Unit,
+    onLongClick: (Int) -> Unit
 ) {
     Card(
         modifier = modifier

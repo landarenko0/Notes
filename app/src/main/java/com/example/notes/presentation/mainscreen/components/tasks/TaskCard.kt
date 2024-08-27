@@ -15,11 +15,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.notes.domain.models.Task
+import java.time.LocalDateTime
+import java.util.UUID
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -30,7 +33,7 @@ fun TaskCard(
     isChecked: Boolean,
     onClick: (Task) -> Unit,
     markTaskCompleted: (Task, Boolean) -> Unit,
-    onLongClick: (Long) -> Unit,
+    onLongClick: (UUID) -> Unit,
 ) {
     Card(
         modifier = modifier
@@ -38,7 +41,7 @@ fun TaskCard(
             .clip(RoundedCornerShape(16.dp))
             .combinedClickable(
                 onClick = { onClick(task) },
-                onLongClick = { onLongClick(task.id) }
+                onLongClick = { onLongClick(task.uuid) }
             )
     ) {
         Row(
@@ -61,7 +64,7 @@ fun TaskCard(
 
                 Column(
                     horizontalAlignment = Alignment.Start,
-                    verticalArrangement = Arrangement.spacedBy(5.dp)
+                    verticalArrangement = Arrangement.spacedBy(3.dp)
                 ) {
                     Text(
                         text = task.text,
@@ -72,7 +75,16 @@ fun TaskCard(
                     )
 
                     task.notificationTime?.let {
-                        Text(text = it.toString())
+                        val dayOfMonth = "" + if (it.dayOfMonth < 10) "0${it.dayOfMonth}" else "${it.dayOfMonth}"
+                        val monthValue = "" + if (it.monthValue < 10) "0${it.monthValue}" else "${it.monthValue}"
+                        val hour = "" + if (it.hour < 10) "0${it.hour}" else "${it.hour}"
+                        val minute = "" + if (it.minute < 10) "0${it.minute}" else "${it.minute}"
+
+                        Text(
+                            text = "$dayOfMonth.$monthValue.${it.year} $hour:$minute",
+                            fontSize = 12.sp,
+                            color = if (LocalDateTime.now() < it) Color(0xFF555555) else Color.Red
+                        )
                     }
                 }
             }

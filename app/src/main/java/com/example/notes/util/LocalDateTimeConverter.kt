@@ -6,8 +6,8 @@ import java.time.LocalDateTime
 object LocalDateTimeConverter {
 
     @TypeConverter
-    fun fromTimeStamp(value: String?): LocalDateTime? = value?.let { LocalDateTime.parse(it) }
+    fun toLocalDateTime(value: String?): LocalDateTime? = value?.let { LocalDateTime.parse(it) }
 
     @TypeConverter
-    fun toTimeStamp(value: LocalDateTime?): String? = value?.toString()
+    fun toString(value: LocalDateTime?): String? = value?.toString()
 }

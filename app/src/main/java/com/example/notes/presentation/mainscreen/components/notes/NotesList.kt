@@ -19,14 +19,14 @@ import com.example.notes.domain.models.Note
 fun NotesList(
     notes: List<Note>,
     selectionEnabled: Boolean,
-    checkedNotes: List<Long>,
-    onNoteClick: (Long) -> Unit,
-    onLongNoteClick: (Long) -> Unit
+    checkedNotes: List<Int>,
+    onNoteClick: (Int) -> Unit,
+    onLongNoteClick: (Int) -> Unit
 ) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(20.dp),
+            .padding(top = 20.dp, start = 20.dp, end = 20.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         when {
