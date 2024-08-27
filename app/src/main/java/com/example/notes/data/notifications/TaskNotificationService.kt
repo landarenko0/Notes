@@ -27,6 +27,7 @@ class TaskNotificationService(
             setContentText(notificationText)
             setContentIntent(pendingIntent)
             setAutoCancel(true)
+            setStyle(NotificationCompat.BigTextStyle())
         }.build().also { notification ->
             notificationManager.notify(notificationId, notification)
         }
