@@ -96,8 +96,12 @@ fun MainScreen(navController: NavController) {
         HorizontalPager(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = paddingValues.calculateTopPadding()),
+                .padding(
+                    top = paddingValues.calculateTopPadding(),
+                    bottom = paddingValues.calculateBottomPadding() + 10.dp
+                ),
             state = pagerState,
+            beyondViewportPageCount = 1,
             pageSpacing = 10.dp,
             userScrollEnabled = !viewModel.selectionEnabled.value
         ) { index ->
