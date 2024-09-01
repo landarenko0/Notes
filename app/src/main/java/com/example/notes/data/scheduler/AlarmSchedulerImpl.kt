@@ -24,7 +24,6 @@ class AlarmSchedulerImpl(
             Intent(context, AlarmReceiver::class.java).apply {
                 putExtra(AlarmReceiver.TASK_TITLE_TAG, task.text)
                 putExtra(AlarmReceiver.TASK_ID_TAG, task.uuid.hashCode())
-                setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
             },
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
